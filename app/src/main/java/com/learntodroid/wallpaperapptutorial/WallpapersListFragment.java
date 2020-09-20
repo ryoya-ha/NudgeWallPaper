@@ -60,6 +60,7 @@ public class WallpapersListFragment extends Fragment implements WallpaperSelectL
     }
 
     private void setHomeScreenWallpaper(Bitmap bitmap) {
+        System.out.println("setHomeScreenWallpaper-");
         try {
             WallpaperManager.getInstance(getContext()).setBitmap(bitmap);
         } catch (IOException e) {

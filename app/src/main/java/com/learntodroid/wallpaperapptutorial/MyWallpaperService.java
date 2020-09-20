@@ -39,21 +39,21 @@ public class MyWallpaperService extends WallpaperService {
 
             touchEnabled = true;
 
-            if(hyft == 1){
-                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.kakigori);
-            }
-            if(hyft == 2){
-                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.soba);
-            }
-            if(hyft == 3){
-                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.burger);
-            }
-            if(hyft == 4){
-                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.gyoza);
-            }
-            if(hyft == 5){
-                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.ramen);
-            }
+//            if(hyft == 1){
+//                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.kakigori);
+//            }
+//            if(hyft == 2){
+//                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.soba);
+//            }
+//            if(hyft == 3){
+//                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.burger);
+//            }
+//            if(hyft == 4){
+//                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.gyoza);
+//            }
+//            if(hyft == 5){
+//                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.ramen);
+//            }
 
             position = new Vector2f(width / 2, height / 2);
             velocity = new Vector2f(10, 10);
@@ -124,15 +124,21 @@ public class MyWallpaperService extends WallpaperService {
         }
 
         private void draw() {
+            //System.out.println("draw");
             SurfaceHolder holder = getSurfaceHolder();
             Canvas canvas = null;
             try {
                 canvas = holder.lockCanvas();
-                if (canvas != null) {
+//                if (canvas != null) {
+//                    handleCollisions();
+//                    position.addVector2f(velocity);
+//                    drawBitmap(canvas);
+//                }
+
                     handleCollisions();
                     position.addVector2f(velocity);
                     drawBitmap(canvas);
-                }
+
             } finally {
                 if (canvas != null) {
                     holder.unlockCanvasAndPost(canvas);
@@ -145,6 +151,7 @@ public class MyWallpaperService extends WallpaperService {
         }
 
         private void drawBitmap(Canvas canvas) {
+            //System.out.println("drawBitmap");
             canvas.drawColor(Color.WHITE);
             canvas.drawBitmap(dvdLogoBitmap, position.getX(), position.getY(), null);
         }
