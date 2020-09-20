@@ -28,7 +28,7 @@
         <service
             android:name=".MyWallpaperService"
             android:enabled="true"
-            android:label="DVD Live Wallpaper"
+            android:label="Live Wallpaper"
             android:permission="android.permission.BIND_WALLPAPER">
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

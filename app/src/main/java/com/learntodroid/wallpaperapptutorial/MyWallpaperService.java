@@ -9,6 +9,8 @@ import android.service.wallpaper.WallpaperService;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import static com.learntodroid.wallpaperapptutorial.LiveWallpaperFragment.hyft;
+
 public class MyWallpaperService extends WallpaperService {
     @Override
     public Engine onCreateEngine() {
@@ -37,7 +39,22 @@ public class MyWallpaperService extends WallpaperService {
 
             touchEnabled = true;
 
-            dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.small_dvd_logo);
+            if(hyft == 1){
+                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.kakigori);
+            }
+            if(hyft == 2){
+                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.soba);
+            }
+            if(hyft == 3){
+                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.burger);
+            }
+            if(hyft == 4){
+                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.gyoza);
+            }
+            if(hyft == 5){
+                dvdLogoBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.raw.ramen);
+            }
+
             position = new Vector2f(width / 2, height / 2);
             velocity = new Vector2f(10, 10);
             speedLevel = 1;
@@ -80,7 +97,7 @@ public class MyWallpaperService extends WallpaperService {
         }
 
         private void applySpeed() {
-            if (speedLevel == 5) {
+            if (speedLevel == 20) {
                 speedLevel = 1;
             } else {
                 speedLevel++;
