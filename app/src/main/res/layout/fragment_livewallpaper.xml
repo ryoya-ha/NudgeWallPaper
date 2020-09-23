@@ -5,12 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Set Live Wallpaper"-->
+<!--        android:id="@+id/fragment_livewallpaper_set"-->
+<!--        android:layout_gravity="center"/>-->
+
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Set Live Wallpaper"
-        android:id="@+id/fragment_livewallpaper_set"
-        android:layout_gravity="center"/>
+        android:text="Restaurant" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sightseeing" />
+
+    <TextView
+        android:id="@+id/text_view0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="20dp"
+        android:text="How do you feel temperature?"/>
 
     <TextView
         android:id="@+id/text_view"
@@ -19,12 +41,27 @@
         android:layout_margin="20dp"
         android:gravity="center"
         android:textColor="#000"
-        android:textSize="50sp"  />
+        android:textSize="50sp" />
 
     <SeekBar
+        android:id="@+id/seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekbar"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/text_view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
 
 </LinearLayout>

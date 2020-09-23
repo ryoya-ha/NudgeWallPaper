@@ -1,9 +1,14 @@
 package com.learntodroid.wallpaperapptutorial;
 
+import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.XmlResourceParser;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +16,11 @@ import android.view.ViewGroup;
 
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,24 +31,57 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import android.os.AsyncTask;
+
 public class LiveWallpaperFragment extends Fragment {
+    private String API_KEY;
     private TextView textView;
-    public static int type =1; //restauramnt
+    private TextView textView2;
+    public static int type = 1;
     public static int hyft;
     WallpaperManager mWM;
     CSVReader parser = new CSVReader();
+
     private HashMap<String,Integer> ResouseList = new HashMap<String, Integer>(){{
-        put("Sakura_Burger", R.raw.sakura_burger);
-        put("Macdonald-Nara", R.raw.sakura_burger);
-        put("GyozaNoOsho-KintetsuNaraEkiMae", R.raw.gyoza);
-        put("Sukiya-KintetsuNaraEkiMae", R.raw.gyoza);
-        put("HousekiBako", R.raw.kakigori);
-        put("MahorobaDaibutsuPurinHonpo", R.raw.kakigori);
-        put("PutimaruCafe", R.raw.soba);
-        put("Genkishin-Nara", R.raw.ramen);
+        //レストラン
+        put("Genkishin-Nara", R.raw.genkishin_nara);
         put("TenriSutaminaRamen-KintetsuNaraEkiMae", R.raw.ramen);
+
+        put("GyozaNoOsho-KintetsuNaraEkiMae", R.raw.gyoza);
+        put("Sukiya-KintetsuNaraEkiMae", R.raw.sukiya);
+
+        put("Macdonald-Nara", R.raw.macdonald);
+        put("Sakura_Burger", R.raw.sakura_burger);
+
+        put("PutimaruCafe", R.raw.cafe);
         put("Sobakiri-Momoyoduki", R.raw.soba);
+
+        put("HousekiBako", R.raw.kakigori);
+        put("MahorobaDaibutsuPurinHonpo", R.raw.pudding);
+
+        //観光地
+//        put("Nara Park", R.raw.nara_park);
+//        put("Mount Wakakusa", R.raw.wakakusayama);
+//
+//        put("Nara Women's University", R.raw.nara_jyoshi);
+//        put("Heijo Palace Remains", R.raw.heijyo);
+//
+//        put("Kofuku-ji ", R.raw.kofukuji);
+//        put("Sarusawa Pond", R.raw.sarusawa);
+//
+//        put("Hokke-ji", R.raw.hokkeji);
+//        put("Kasuga-taisha", R.raw.kasugataisha);
+//
+//        put("Todai-ji", R.raw.todaiji);
+//        put("Himuro Shrine", R.raw.himuro);
     }
+
     };
 
 
@@ -49,25 +89,75 @@ public class LiveWallpaperFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             parser.reader(getContext());
+            API_KEY = getResources().getString(R.string.OpenWeatherMap);
+            System.out.println(API_KEY);
+
+        final OkHttpClient client = new OkHttpClient();
+
+        final Request request = new Request.Builder()
+//                .url("http://www.mocky.io/v2/573336c90f0000902cead88d")
+//                .url("https://zipcloud.ibsnet.co.jp/api/search?zipcode=7830060")
+                  .url("https://api.openweathermap.org/data/2.5/onecall?lat=35.681236&lon=139.767125&units=metric&lang=ja&appid="+API_KEY)
+                .build();
+
+        AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (!response.isSuccessful()) {
+
+                        System.out.println("fail");
+                        return null;
+                    }
+                    System.out.println(response.body().string());
+                    return response.body().string();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                if (s != null) {
+                    textView.setText(s);
+                }
+            }
+        };
+        asyncTask.execute();
     }
 
-    @Nullable
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_livewallpaper, container, false);
 
-        view.findViewById(R.id.fragment_livewallpaper_set).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
-                intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(getActivity(), MyWallpaperService.class));
-                startActivity(intent);
-            }
-        });
+//        view.findViewById(R.id.fragment_livewallpaper_set).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
+//                intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(getActivity(), MyWallpaperService.class));
+//                startActivity(intent);
+//            }
+//        });
 
         textView = view.findViewById(R.id.text_view);
+        textView2 = view.findViewById(R.id.text_view2);
+
         SeekBar seekBar = view.findViewById(R.id.seekbar);
         mWM = WallpaperManager.getInstance(getContext());
+
+        Button button2 = view.findViewById(R.id.button2);
+
+        button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    System.out.println("Button OK");
+                }
+            }
+        );
 
         // 初期値
         seekBar.setProgress(1);
@@ -87,6 +177,9 @@ public class LiveWallpaperFragment extends Fragment {
                         textView.setText(str);
                         //System.out.println(str);
                         hyft = progress;
+
+//                        String str2 = String.format(Locale.US, "%d",hyft);
+//                        textView2.setText(str2);
                     }
 
                     //ツマミがタッチされた時に呼ばれる
@@ -94,50 +187,39 @@ public class LiveWallpaperFragment extends Fragment {
                     public void onStartTrackingTouch(SeekBar seekBar) {
                     }
 
-
                     //ツマミがリリースされた時に呼ばれる
+
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
+
                         List<Integer> select = new ArrayList<Integer>();
+
+                        //String url = "http://zip.cgis.biz/xml/zip.php?zn=1700011";
+                        OkHttpClient client = new OkHttpClient();
+
+//                        try {
+//                            System.out.println("try");
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+
                         for(int i =0; i< parser.objects.size(); i++) {
 
                             if( parser.objects.get(i).HYFT == hyft && parser.objects.get(i).type==type) {
                                 select.add(parser.objects.get(i).id);
 //                                System.out.println(parser.objects.get(i).jp_name);
-//                                System.out.println(parser.objects.get(i).HYFT);
-//                                System.out.println(parser.objects.get(i).id);
-//                                System.out.println(parser.objects.get(i).type);
                             }
                         }
                         int index = new Random().nextInt(select.size());
-                        System.out.println(select.get(index));
+                        //System.out.println(select.get(index));
                         String title =  parser.objects.get(select.get(index)).en_name;
                         System.out.println(title);
+                        String str2 = String.format(Locale.US, "%s",title);
+                        textView2.setText(str2);
+
                         try{
                             System.out.println(title);
                             mWM.setResource(ResouseList.get(title));
-
-//                            if(hyft == 1){
-//                                mWM.setResource(ResouseList.get(title));
-//                                System.out.println(ResouseList.get(title));
-////                                mWM.setResource(eval("R.raw."+title));
-//                            }
-//                            if(hyft == 2){
-//                                System.out.println(R.raw.soba);
-//                                mWM.setResource(R.raw.soba);
-//                            }
-//                            if(hyft == 3){
-//                                System.out.println(R.raw.burger);
-//                                mWM.setResource(R.raw.burger);
-//                            }
-//                            if(hyft == 4){
-//                                System.out.println(R.raw.gyoza);
-//                                mWM.setResource(R.raw.gyoza);
-//                            }
-//                            if(hyft == 5){
-//                                System.out.println(R.raw.ramen);
-//                                mWM.setResource(R.raw.ramen);
-//                            }
 
 //                            Intent intent = new Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER);
 //                            intent.putExtra(WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT, new ComponentName(getActivity(), MyWallpaperService.class));
@@ -146,14 +228,7 @@ public class LiveWallpaperFragment extends Fragment {
                         } catch(IOException e){
                             e.printStackTrace();
                         }
-//
-
-
-                        //}
-                        //else{
-                        //System.out.println("hyft");
                         //System.out.println(hyft);
-                        //}
                     }
 
                 });
