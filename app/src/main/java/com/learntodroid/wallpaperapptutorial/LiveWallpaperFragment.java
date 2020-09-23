@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,12 +40,16 @@ import okhttp3.ResponseBody;
 
 import android.os.AsyncTask;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class LiveWallpaperFragment extends Fragment {
     private String API_KEY;
     private TextView textView;
     private TextView textView2;
     public static int type = 1;
     public static int hyft;
+    Response response;
     WallpaperManager mWM;
     CSVReader parser = new CSVReader();
 
@@ -97,20 +102,33 @@ public class LiveWallpaperFragment extends Fragment {
         final Request request = new Request.Builder()
 //                .url("http://www.mocky.io/v2/573336c90f0000902cead88d")
 //                .url("https://zipcloud.ibsnet.co.jp/api/search?zipcode=7830060")
-                  .url("https://api.openweathermap.org/data/2.5/onecall?lat=35.681236&lon=139.767125&units=metric&lang=ja&appid="+API_KEY)
+                  .url("https://api.openweathermap.org/data/2.5/onecall?lat=34.684458&lon=135.827505&units=metric&lang=ja&appid="+API_KEY)
                 .build();
 
         AsyncTask<Void, Void, String> asyncTask = new AsyncTask<Void, Void, String>() {
+            @SuppressLint("StaticFieldLeak")
             @Override
             protected String doInBackground(Void... params) {
                 try {
-                    Response response = client.newCall(request).execute();
+                    response = client.newCall(request).execute();
+
                     if (!response.isSuccessful()) {
 
                         System.out.println("fail");
                         return null;
                     }
-                    System.out.println(response.body().string());
+//                    System.out.println(response.body().string());
+                    System.out.println("a");
+                    String str = response.body().string();
+                    System.out.println(str);
+                    JSONObject jsonObject = new JSONObject(str);
+                    System.out.println("b");
+
+                    JSONArray jsonarray = jsonObject.getJSONArray("hourly");
+                    System.out.println(jsonarray);
+                    Double current_hyft = jsonarray.getJSONObject(1).getDouble("feels_like");
+//                    Double current_lat = jsonObject.getDouble("lat");
+                    System.out.println(current_hyft);
                     return response.body().string();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -122,6 +140,8 @@ public class LiveWallpaperFragment extends Fragment {
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 if (s != null) {
+                    System.out.println(s);
+
                     textView.setText(s);
                 }
             }
@@ -191,6 +211,7 @@ public class LiveWallpaperFragment extends Fragment {
 
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
+
 
                         List<Integer> select = new ArrayList<Integer>();
 
